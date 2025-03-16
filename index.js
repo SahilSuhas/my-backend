@@ -42,11 +42,7 @@ const PORT = process.env.PORT || 5000;  // Using port 5000 for development
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://last-one-three.vercel.app',  // Your actual Vercel domain
-    'https://sahil-catalogue.onrender.com'
-  ],
+  origin: '*',  // Allow all origins in development
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -129,6 +125,37 @@ app.get("/images/:filename", (req, res) => {
   }
 });
 
+// Add this new API endpoint for n8n
+app.get("/api/catalogue", (req, res) => {
+  const { pid1, pid2 } = req.query;
+
+  if (!pid1 || !pid2) {
+    return res.status(400).json({ 
+      error: "Missing PID parameters" 
+    });
+  }
+
+  // Find products by PIDs
+  const product1 = products.find(p => p.pid === pid1);
+  const product2 = products.find(p => p.pid === pid2);
+
+  // Construct response
+  const response = {
+    product1: product1 ? {
+      pid: product1.pid,
+      name: product1.name,
+      image_url: product1.image ? `https://sahil-catalogue.onrender.com/images/${product1.image}` : null
+    } : null,
+    product2: product2 ? {
+      pid: product2.pid,
+      name: product2.name,
+      image_url: product2.image ? `https://sahil-catalogue.onrender.com/images/${product2.image}` : null
+    } : null
+  };
+
+  res.status(200).json(response);
+});
+
 // Add error handling for undefined routes
 app.use((req, res) => {
   res.status(404).json({
@@ -153,5 +180,6 @@ if (!fs.existsSync('uploads')) {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
+console.log(`🌍 Accessible at: https://sahil-catalogue.onrender.com`);
 }); 
