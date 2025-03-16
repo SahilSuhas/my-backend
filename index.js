@@ -44,7 +44,7 @@ const PORT = process.env.PORT || 5000;  // Using port 5000 for development
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://last-cvjbbtchu-sahil-ramtekes-projects-5c3f61cb.vercel.app',
+    'https://last-one-three.vercel.app',  // Your actual Vercel domain
     'https://sahil-catalogue.onrender.com'
   ],
   methods: ['GET', 'POST'],
