@@ -42,7 +42,11 @@ const PORT = process.env.PORT || 5000;  // Using port 5000 for development
 
 // Middleware
 app.use(cors({
-  origin: '*',  // Allow all origins in development
+  origin: [
+    'http://localhost:3000',
+    'https://last-cvjbbtchu-sahil-ramtekes-projects-5c3f61cb.vercel.app',
+    'https://sahil-catalogue.onrender.com'
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
