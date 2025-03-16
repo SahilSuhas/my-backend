@@ -54,10 +54,10 @@ const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
     const { pid } = req.body;
-    // Add timestamp to make filename unique
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
-    const filename = `${pid}_${timestamp}${ext}`;
+    // Make sure pid is defined before using it in filename
+    const filename = pid ? `${pid}_${timestamp}${ext}` : `image_${timestamp}${ext}`;
     cb(null, filename);
   },
 });
@@ -139,19 +139,26 @@ app.get("/api/catalogue", (req, res) => {
   const product1 = products.find(p => p.pid === pid1);
   const product2 = products.find(p => p.pid === pid2);
 
-  // Construct response
+  // Construct response with proper image URL handling
   const response = {
     product1: product1 ? {
       pid: product1.pid,
       name: product1.name,
-      image_url: product1.image ? `https://sahil-catalogue.onrender.com/images/${product1.image}` : null
+      image_url: product1.image 
+        ? `https://sahil-catalogue.onrender.com/images/${product1.image}`
+        : null
     } : null,
     product2: product2 ? {
       pid: product2.pid,
       name: product2.name,
-      image_url: product2.image ? `https://sahil-catalogue.onrender.com/images/${product2.image}` : null
+      image_url: product2.image 
+        ? `https://sahil-catalogue.onrender.com/images/${product2.image}`
+        : null
     } : null
   };
+
+  // Log the response for debugging
+  console.log("API Response:", response);
 
   res.status(200).json(response);
 });
