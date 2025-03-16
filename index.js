@@ -38,13 +38,13 @@ const saveProducts = () => {
 };
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;  // Using port 5000 for development
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow frontend domain
-  methods: ['GET', 'POST'],        // Allow specific methods
-  allowedHeaders: ['Content-Type'] // Allow specific headers
+  origin: '*',  // Allow all origins in development
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
 }));
 app.use(express.json());
 app.use('/images', express.static("uploads"));
@@ -63,6 +63,18 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+// Add a root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Catalogue API is running',
+    endpoints: {
+      search: 'POST /search',
+      upload: 'POST /upload',
+      images: 'GET /images/:filename'
+    }
+  });
+});
 
 // 📌 Search products by PID
 app.post("/search", (req, res) => {
@@ -112,6 +124,28 @@ app.get("/images/:filename", (req, res) => {
     res.status(404).json({ error: "Image not found" });
   }
 });
+
+// Add error handling for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested endpoint does not exist'
+  });
+});
+
+// Add general error handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: 'Something went wrong!'
+  });
+});
+
+// Create uploads directory if it doesn't exist
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
 
 // Start server
 app.listen(PORT, () => {
