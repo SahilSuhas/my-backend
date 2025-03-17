@@ -109,6 +109,8 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
 
   console.log("Updated product:", product);
+  console.log("Uploading image for PID:", pid);
+  console.log("Generated filename:", filename);
   res.json({ message: "Image assigned successfully", filename });
 });
 
