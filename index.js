@@ -56,7 +56,6 @@ const storage = multer.diskStorage({
     const { pid } = req.body;
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
-    // Make sure pid is defined before using it in filename
     const filename = pid ? `${pid}_${timestamp}${ext}` : `image_${timestamp}${ext}`;
     cb(null, filename);
   },
